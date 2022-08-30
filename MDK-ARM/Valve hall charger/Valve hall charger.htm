@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Valve hall charger\Valve hall charger.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Valve hall charger\Valve hall charger.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Jul 09 14:12:23 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Aug 30 19:24:41 2022
 <BR><P>
 <H3>Maximum Stack Usage =        488 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2440,7 +2440,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1c2]"></a>Set_BaterrryInfo</STRONG> (Thumb, 22 bytes, Stack size 16 bytes, charginghandle.o(i.Set_BaterrryInfo))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = Set_BaterrryInfo &rArr; Set_BaterrryVoltageInfo &rArr; __aeabi_fmul
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = Set_BaterrryInfo &rArr; Set_BaterrryVoltageInfo &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryVoltageInfo
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryCurrentInfo
@@ -3954,7 +3954,6 @@ Global Symbols
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ConstantCurrent_Current
 <LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ConstantCurrentTargetVoltage
 <LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
-<LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryVoltageInfo
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryCurrentInfo
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_ChargingVoltage
 <LI><a href="#[225]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shellExtParseNumber
@@ -4130,11 +4129,10 @@ Local Symbols
 <LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetBatteryCapacity
 </UL>
 
-<P><STRONG><a name="[1c3]"></a>Set_BaterrryVoltageInfo</STRONG> (Thumb, 188 bytes, Stack size 32 bytes, charginghandle.o(i.Set_BaterrryVoltageInfo))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Set_BaterrryVoltageInfo &rArr; __aeabi_fmul
+<P><STRONG><a name="[1c3]"></a>Set_BaterrryVoltageInfo</STRONG> (Thumb, 132 bytes, Stack size 24 bytes, charginghandle.o(i.Set_BaterrryVoltageInfo))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Set_BaterrryVoltageInfo &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
-<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2uiz
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
 </UL>

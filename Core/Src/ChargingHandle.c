@@ -401,14 +401,14 @@ static void Set_BaterrryVoltageInfo(BatteryInfo *pb, uint16_t start_section)
 	/*如果单元个数量不为零，则按照单元标准*/
 	if (g_Charge.UnitElements)
 	{
-		pb->User_TrickleTargetVlotage = g_Charge.UnitElements * SINGLEUNIT_MINVOLTAGE;
-		pb->User_ConstantVoltage_Voltage = g_Charge.UnitElements * SINGLEUNIT_STDVOLTAGE;
-		pb->User_ConstantCurrentTargetVoltage = g_Charge.UnitElements * SINGLEUNIT_MAXVOLTAGE;
-		/*保留用户设置*/
-		if (pb->User_SecondBootVoltage == 0)
-		{
-			pb->User_SecondBootVoltage = g_Charge.UnitElements * 2.10F;
-		}
+		// pb->User_TrickleTargetVlotage = g_Charge.UnitElements * SINGLEUNIT_MINVOLTAGE;
+		// pb->User_ConstantVoltage_Voltage = g_Charge.UnitElements * SINGLEUNIT_STDVOLTAGE;
+		// pb->User_ConstantCurrentTargetVoltage = g_Charge.UnitElements * SINGLEUNIT_MAXVOLTAGE;
+		// /*保留用户设置*/
+		// if (pb->User_SecondBootVoltage == 0)
+		// {
+		// 	pb->User_SecondBootVoltage = g_Charge.UnitElements * 2.10F;
+		// }
 	}
 	/*自动设置*/
 	else
