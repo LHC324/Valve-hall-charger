@@ -4,6 +4,7 @@
         "adc.h": "c",
         "rtc.h": "c",
         "shell_port.h": "c",
-        "mdrtuslave.h": "c"
+        "mdrtuslave.h": "c",
+        "charginghandle.h": "c"
     }
 }

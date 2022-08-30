@@ -155,6 +155,9 @@
 #define ADD_COUNTERS 50U		//底板电源打开时，不能立即打开充电开关，电流太大
 #define PART_SIZE 12U			//当前DAC分段数
 
+#define __SET_FLAG(__OBJECT, __BIT) ((size_t)((__OBJECT) |= 1U << (__BIT)))
+#define __RESET_FLAG(__OBJECT, __BIT) ((size_t)((__OBJECT) &= ~(1U << (__BIT))))
+#define __GET_FLAG(__OBJECT, __BIT) ((size_t)((__OBJECT) & (1U << (__BIT))))
 /***********************************软件定时器参数***********************************/
 #define T_10MS 1
 #define T_20MS 2
@@ -203,6 +206,15 @@ extern TIM_HandleTypeDef htim1;
 extern TIMER8 g_Timer;
 extern TIMER8 g_Timer1;
 
+typedef enum
+{
+	ChargingTimingFlag, //充电计时标志
+	ChargingEndFlag,	//充电结束标志
+	QuickChargingFlag,	//快速充电标志
+	CloseAcInputFlag,	//关闭交流供电标志
+	ZeroCurrentFlag,	//零电流标志
+	ChargingFaultFlag,	//充电故障标志
+} Flag_Group;
 typedef enum
 {
 	trickle,		  //涓流
@@ -282,19 +294,22 @@ typedef struct
 	uint16_t ChargingTimes;	   //充电时间
 	uint8_t ChargerStatus[2];  //充电器工作状态
 	uint8_t ChargingStatus[2]; //充电状态
-	bool ChargingTimingFlag;   //充电计时标志
-	bool ChargingEndFlag;	   //充电结束标志
-	bool QuickChargingFlag;	   //快速充电标志
-	bool CloseAcInputFlag;	   //关闭交流供电标志
-	bool ZeroCurrentFlag;	   //
-	bool ChargingFaultFlag;	   //充电故障标志
-							   //	bool 	 ZeroVoltageFlag;
-							   //	bool     BreaksFlag;			//断路标志
-	MachineState Mstate;	   //充电器工作状态
-	ChargeState Cstate;		   //充电状态
-							   //	BreakTypde   Break_Type;		//断路类型
-} PresentBatteryInfomation;
+	// bool ChargingTimingFlag;   //充电计时标志
+	// bool ChargingEndFlag;	   //充电结束标志
+	// bool QuickChargingFlag;	   //快速充电标志
+	// bool CloseAcInputFlag;	   //关闭交流供电标志
+	// bool ZeroCurrentFlag;	   //
+	// bool ChargingFaultFlag;	   //充电故障标志
+	// 						   //	bool 	 ZeroVoltageFlag;
+	// 						   //	bool     BreaksFlag;			//断路标志
+	size_t Flag;
+	MachineState Mstate; //充电器工作状态
+	ChargeState Cstate;	 //充电状态
+						 //	BreakTypde   Break_Type;		//断路类型
+						 // } PresentBatteryInfomation;
+} BatteryInfo;
 
+extern BatteryInfo g_PresentBatteryInfo;
 extern ChangeHandle g_Charge;
 extern DisChargeHandle g_DisCharge;
 
@@ -305,14 +320,18 @@ static float Get_Current(void);			//获取实际电流值
 float Get_Voltage(void);				//获取实际电压值
 static void Set_Voltage(float voltage); //设置电压值
 
-extern void Charger_Handle(void); //充电器事件处理
+// extern void Charger_Handle(void); //充电器事件处理
+extern void Charger_Handle(BatteryInfo *pb);
+extern void Dwin_ReportHadle(BatteryInfo *pb);
+extern void Sampling_handle(BatteryInfo *pb);
+extern void ChargeTimer(BatteryInfo *pb);
 
 // #if (DEBUGGING == 1)
 extern void User_Debug(void);
 // #endif
 
 static float Get_ChargingQuantity(void);
-extern void Sampling_handle(void);
+// extern void Sampling_handle(void);
 extern void TrickleChargeCurrent(uint8_t *dat, uint8_t length);
 extern void TrickleChargeTargetVoltage(uint8_t *dat, uint8_t length);
 extern void ConstantCurrent_Current(uint8_t *dat, uint8_t length);
@@ -324,7 +343,7 @@ extern void Set_UnitElements(uint8_t *dat, uint8_t length);
 extern void Set_SecondBootvoltage(uint8_t *dat, uint8_t length);
 extern void SetBatteryCapacity(uint8_t *dat, uint8_t length);
 extern uint16_t Get_BaterrryInfo(float persent_voltage);
-extern void Set_BaterrryInfo(uint16_t start_section);
+// extern void Set_BaterrryInfo(uint16_t start_section);
 extern void ChargeTargetTime(uint8_t *dat, uint8_t length);
 
 extern void RestoreFactory(uint8_t *dat, uint8_t length);
@@ -342,22 +361,22 @@ extern void Set_Min(uint8_t *dat, uint8_t length);
 extern void Set_Sec(uint8_t *dat, uint8_t length);
 
 extern void Setting_RealTime(uint8_t *dat, uint8_t length); //设置时间
-static void getMachineState(void);							//获取机器状态
-extern void ChargeTimer(void);								//充电时间电量计时器
+// static void getMachineState(void);							//获取机器状态
+// extern void ChargeTimer(void);								//充电时间电量计时器
 
-static void StandbyEvent(void);
-static void DisChargeEvent(void);
-static void ChargerEvent(void);
+// static void StandbyEvent(void);
+// static void DisChargeEvent(void);
+// static void ChargerEvent(void);
 extern void FlashReadInit(void);
 extern void Report_BackChargingData(void);
 
 extern void Clear_UserInfo(void);
-static uint8_t Report_DataHandle(uint8_t *buffer);
-extern void Dwin_ReportHadle(void);
-static void Charging_Animation(void); //充电动画
-static void Update_ChargingInfo(void);
-static void Report_RealTime(void); //上报实时时间
-static void LTE_Report_ChargeData(void);
+// static uint8_t Report_DataHandle(uint8_t *buffer);
+// extern void Dwin_ReportHadle(void);
+// static void Charging_Animation(void); //充电动画
+// static void Update_ChargingInfo(void);
+// static void Report_RealTime(void); //上报实时时间
+// static void LTE_Report_ChargeData(void);
 extern void Flash_Operation(void);
 
 #endif /* INC_CHARGINGHANDLE_H_ */

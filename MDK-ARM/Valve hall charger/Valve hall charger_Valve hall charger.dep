@@ -1,7 +1,7 @@
 Dependencies for Project 'Valve hall charger', Target 'Valve hall charger': (DO NOT MODIFY !)
 F (startup_stm32f103xe.s)(0x62B3D471)(--cpu Cortex-M3 -g --apcs=interwork -I ..\Core\Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include--pd "__UVISION_VERSION SETA 527" --pd "_RTE_ SETA 1" --pd "STM32F10X_HD SETA 1"--list startup_stm32f103xe.lst --xref -o "valve hall charger\startup_stm32f103xe.o" --depend "valve hall charger\startup_stm32f103xe.d")
-F (..\Core\Src\ChargingHandle.c)(0x62C146D0)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\charginghandle.o" --omf_browse "valve hall charger\charginghandle.crf" --depend "valve hall charger\charginghandle.d")
-I (../Core/Inc/ChargingHandle.h)(0x62BFFFC2)
+F (..\Core\Src\ChargingHandle.c)(0x62C90424)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\charginghandle.o" --omf_browse "valve hall charger\charginghandle.crf" --depend "valve hall charger\charginghandle.d")
+I (../Core/Inc/ChargingHandle.h)(0x62C8FD1B)
 I (../Core/Inc/main.h)(0x62C137A0)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x60EFF8EB)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x62B3D46E)
@@ -114,7 +114,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599ECD2C)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x599ECD2E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599ECD2C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x599ECD2A)
-I (../Core/Inc/ChargingHandle.h)(0x62BFFFC2)
+I (../Core/Inc/ChargingHandle.h)(0x62C8FD1B)
 I (../Core/Inc/usart.h)(0x62B12273)
 I (../Core/Inc/dac.h)(0x62B12272)
 I (../Core/Inc/Flash.h)(0x61EE2A8E)
@@ -164,7 +164,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x599ECD2E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599ECD2C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x599ECD2A)
 I (../Core/Inc/usart.h)(0x62B12273)
-I (../Core/Inc/ChargingHandle.h)(0x62BFFFC2)
+I (../Core/Inc/ChargingHandle.h)(0x62C8FD1B)
 F (..\Core\Src\Flash.c)(0x62B07856)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\flash.o" --omf_browse "valve hall charger\flash.crf" --depend "valve hall charger\flash.d")
 I (../Core/Inc/Flash.h)(0x61EE2A8E)
 I (../Core/Inc/main.h)(0x62C137A0)
@@ -321,7 +321,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599ECD2C)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x599ECD2E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599ECD2C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x599ECD2A)
-F (../Core/Src/freertos.c)(0x62B96DA3)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\freertos.o" --omf_browse "valve hall charger\freertos.crf" --depend "valve hall charger\freertos.d")
+F (../Core/Src/freertos.c)(0x62C91C13)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\freertos.o" --omf_browse "valve hall charger\freertos.crf" --depend "valve hall charger\freertos.d")
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x60EFF8DF)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599ECD2C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599ECD2E)
@@ -385,7 +385,7 @@ I (../FreeModBus/Inc/mdtype.h)(0x6246AAD5)
 I (../FreeModBus/Inc/mdconfig.h)(0x626A626C)
 I (../FreeModBus/Inc/mdregpool.h)(0x611377CB)
 I (../FreeModBus/Inc/mdrecbuffer.h)(0x611377AB)
-I (../Core/Inc/ChargingHandle.h)(0x62BFFFC2)
+I (../Core/Inc/ChargingHandle.h)(0x62C8FD1B)
 F (../Core/Src/adc.c)(0x62B4550C)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\adc.o" --omf_browse "valve hall charger\adc.crf" --depend "valve hall charger\adc.d")
 I (../Core/Inc/adc.h)(0x62B45517)
 I (../Core/Inc/main.h)(0x62C137A0)
@@ -1765,7 +1765,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc_ex.h)(0x60EFF8EB)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x60EFF8EB)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x60EFF8EB)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x60EFF8EB)
-F (../Core/Src/system_stm32f1xx.c)(0x62C1470E)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\system_stm32f1xx.o" --omf_browse "valve hall charger\system_stm32f1xx.crf" --depend "valve hall charger\system_stm32f1xx.d")
+F (../Core/Src/system_stm32f1xx.c)(0x62C91C44)(--c99 -c --cpu Cortex-M3 -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../FreeModBus/Inc -I ../Letter_Shell/Inc -I ../Dwin/Inc-I.\RTE\_Valve_hall_charger-IC:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include-IC:\Users\Administrator\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="527" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE -DUSER_VECT_TAB_ADDRESS -DUSING_FREERTOS-o "valve hall charger\system_stm32f1xx.o" --omf_browse "valve hall charger\system_stm32f1xx.crf" --depend "valve hall charger\system_stm32f1xx.d")
 I (../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h)(0x60EFF8EA)
 I (../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h)(0x60EFF8EA)
 I (../Drivers/CMSIS/Include/core_cm3.h)(0x60EFF8DE)

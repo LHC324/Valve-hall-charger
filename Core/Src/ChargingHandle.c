@@ -30,7 +30,8 @@ TIMER8 g_Timer1 = {
 };
 ChangeHandle g_Charge = {0}; //__attribute__((at(0x8000000)))
 DisChargeHandle g_DisCharge = {0};
-PresentBatteryInfomation g_PresentBatteryInfo = {0};
+// PresentBatteryInfomation g_PresentBatteryInfo = {0};
+BatteryInfo g_PresentBatteryInfo = {0};
 
 RTC_DateTypeDef SetDate; //设置日期
 RTC_TimeTypeDef SetTime; //设置时间
@@ -65,6 +66,12 @@ SideParm SideparmCurrent = {true, {0.0}, &SideparmCurrent.SideBuff[0], 0.0};
 SideParm SideparmVoltage = {true, {0.0}, &SideparmVoltage.SideBuff[0], 0.0};
 #endif
 
+static void Charging_Animation(BatteryInfo *pb);
+static void getChargingState(BatteryInfo *pb);
+static void ChargerEvent(BatteryInfo *pb);
+static void StandbyEvent(BatteryInfo *pb);
+static uint8_t Report_DataHandle(BatteryInfo *pb, uint8_t *buffer);
+static void Report_RealTime(void);
 #if (DEBUGGING == 1)
 void User_Debug(void)
 {
@@ -371,80 +378,86 @@ void Clear_UserInfo(void)
 /*
  * 设置电池电流参数
  */
-static void Set_BaterrryCurrentInfo(void)
+// static void Set_BaterrryCurrentInfo(void)
+static void Set_BaterrryCurrentInfo(BatteryInfo *pb)
 {
 	/*设置各段电流*/
-	g_PresentBatteryInfo.User_TrickleCurrent = g_Charge.BatteryCapacity * SINGLEUNIT_STDCURRENT;
-	g_Charge.TrickleCurrent = g_PresentBatteryInfo.User_TrickleCurrent * 10U;
+	pb->User_TrickleCurrent = g_Charge.BatteryCapacity * SINGLEUNIT_STDCURRENT;
+	g_Charge.TrickleCurrent = pb->User_TrickleCurrent * 10U;
 
-	g_PresentBatteryInfo.User_ConstantCurrent_Current = g_Charge.BatteryCapacity * SINGLEUNIT_MAXCURRENT;
-	g_Charge.ConstantCurrent_Current = g_PresentBatteryInfo.User_ConstantCurrent_Current * 10U;
+	pb->User_ConstantCurrent_Current = g_Charge.BatteryCapacity * SINGLEUNIT_MAXCURRENT;
+	g_Charge.ConstantCurrent_Current = pb->User_ConstantCurrent_Current * 10U;
 
-	g_PresentBatteryInfo.User_ConstantVoltageTargetCurrent = g_Charge.BatteryCapacity * SINGLEUNIT_MINCURRENT;
-	g_Charge.ConstantVoltageTargetCurrent = g_PresentBatteryInfo.User_ConstantVoltageTargetCurrent * 10U;
+	pb->User_ConstantVoltageTargetCurrent = g_Charge.BatteryCapacity * SINGLEUNIT_MINCURRENT;
+	g_Charge.ConstantVoltageTargetCurrent = pb->User_ConstantVoltageTargetCurrent * 10U;
 }
 
 /*
  * 设置电池电压参数
  */
-static void Set_BaterrryVoltageInfo(uint16_t start_section)
+// static void Set_BaterrryVoltageInfo(uint16_t start_section)
+static void Set_BaterrryVoltageInfo(BatteryInfo *pb, uint16_t start_section)
 {
 	/*如果单元个数量不为零，则按照单元标准*/
 	if (g_Charge.UnitElements)
 	{
-		g_PresentBatteryInfo.User_TrickleTargetVlotage = g_Charge.UnitElements * SINGLEUNIT_MINVOLTAGE;
-		g_PresentBatteryInfo.User_ConstantVoltage_Voltage = g_Charge.UnitElements * SINGLEUNIT_STDVOLTAGE;
-		g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage = g_Charge.UnitElements * SINGLEUNIT_MAXVOLTAGE;
+		pb->User_TrickleTargetVlotage = g_Charge.UnitElements * SINGLEUNIT_MINVOLTAGE;
+		pb->User_ConstantVoltage_Voltage = g_Charge.UnitElements * SINGLEUNIT_STDVOLTAGE;
+		pb->User_ConstantCurrentTargetVoltage = g_Charge.UnitElements * SINGLEUNIT_MAXVOLTAGE;
 		/*保留用户设置*/
-		if (g_PresentBatteryInfo.User_SecondBootVoltage == 0)
+		if (pb->User_SecondBootVoltage == 0)
 		{
-			g_PresentBatteryInfo.User_SecondBootVoltage = g_Charge.UnitElements * 2.10F;
+			pb->User_SecondBootVoltage = g_Charge.UnitElements * 2.10F;
 		}
 	}
 	/*自动设置*/
 	else
 	{
-		g_PresentBatteryInfo.User_TrickleTargetVlotage = Voltage_Interval[start_section][0];
-		g_PresentBatteryInfo.User_ConstantVoltage_Voltage = SINGLEUNIT_STDVOLTAGE * (Voltage_Interval[start_section][0] / SINGLEUNIT_MINVOLTAGE);
-		g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage = Voltage_Interval[start_section][1];
+		pb->User_TrickleTargetVlotage = Voltage_Interval[start_section][0];
+		pb->User_ConstantVoltage_Voltage = SINGLEUNIT_STDVOLTAGE * (Voltage_Interval[start_section][0] / SINGLEUNIT_MINVOLTAGE);
+		pb->User_ConstantCurrentTargetVoltage = Voltage_Interval[start_section][1];
 		/*设置二次启动电压*/
-		g_PresentBatteryInfo.User_SecondBootVoltage = 2.10F * (Voltage_Interval[start_section][0] / SINGLEUNIT_MINVOLTAGE);
+		pb->User_SecondBootVoltage = 2.10F * (Voltage_Interval[start_section][0] / SINGLEUNIT_MINVOLTAGE);
 	}
 	/*设置屏幕显示时的各段电压*/
-	g_Charge.TrickleTargetVlotage = g_PresentBatteryInfo.User_TrickleTargetVlotage * 10U;
-	g_Charge.ConstantVoltage_Voltage = g_PresentBatteryInfo.User_ConstantVoltage_Voltage * 10U;
-	g_Charge.ConstantCurrentTargetVoltage = g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage * 10U;
+	g_Charge.TrickleTargetVlotage = pb->User_TrickleTargetVlotage * 10U;
+	g_Charge.ConstantVoltage_Voltage = pb->User_ConstantVoltage_Voltage * 10U;
+	g_Charge.ConstantCurrentTargetVoltage = pb->User_ConstantCurrentTargetVoltage * 10U;
 	/*把单精度浮点数转换为整数*/
-	g_Charge.SecondBootVoltage = g_PresentBatteryInfo.User_SecondBootVoltage * 10U;
+	g_Charge.SecondBootVoltage = pb->User_SecondBootVoltage * 10U;
 }
 
 /*
  * 设置电池参数
  */
-void Set_BaterrryInfo(uint16_t start_section)
+// void Set_BaterrryInfo(uint16_t start_section)
+void Set_BaterrryInfo(BatteryInfo *pb, uint16_t start_section)
 {
 	/*设置当前充电电瓶电流参数*/
-	Set_BaterrryCurrentInfo();
+	Set_BaterrryCurrentInfo(pb);
 	/*设置当前充电电瓶电压参数*/
-	Set_BaterrryVoltageInfo(start_section);
+	Set_BaterrryVoltageInfo(pb, start_section);
 }
 
 /*
  * 复位充电电压
  */
-static float Reset_ChargingVoltage(void)
+// static float Reset_ChargingVoltage(void)
+static float Reset_ChargingVoltage(BatteryInfo *pb)
 {
 	float Current_Voltage = Get_Voltage();
 	float Compensation = ((float)g_Charge.Compensation) / 1000.0F;
 
 	/*最大补偿值500mv, 最小补偿值100mv*/
-	Compensation > MAX_COMPENSATION ? (Compensation = MAX_COMPENSATION) : (Compensation < MIN_COMPENSATION ? (Compensation = MIN_COMPENSATION) : 0);
+	Compensation > MAX_COMPENSATION ? (Compensation = MAX_COMPENSATION)
+									: (Compensation < MIN_COMPENSATION ? (Compensation = MIN_COMPENSATION)
+																	   : false);
 	/*把当前检测到电瓶电压+0.5V作为起充电压*/
 #if (!USEING_COMPENSATION)
-	g_PresentBatteryInfo.PresentChargingVoltage = Current_Voltage + 0.5F;
+	pb->PresentChargingVoltage = Current_Voltage + 0.5F;
 #else
 	/*起充电压由屏幕给定*/
-	g_PresentBatteryInfo.PresentChargingVoltage = Current_Voltage + ((float)g_Charge.Compensation) / 1000.0F;
+	pb->PresentChargingVoltage = Current_Voltage + ((float)g_Charge.Compensation) / 1000.0F;
 #endif
 
 	return Current_Voltage;
@@ -453,10 +466,11 @@ static float Reset_ChargingVoltage(void)
 /*
  * 上报迪文屏幕数据
  */
-void Dwin_ReportHadle(void)
+// void Dwin_ReportHadle(void)
+void Dwin_ReportHadle(BatteryInfo *pb)
 {
 	uint8_t buffer[32] = {0};
-	uint8_t index = Report_DataHandle(buffer);
+	uint8_t index = Report_DataHandle(pb, buffer);
 
 	Report_RealTime();
 	osDelay(1);
@@ -464,27 +478,29 @@ void Dwin_ReportHadle(void)
 	DWIN_WRITE(CHARGE_BATTERY_VOLTAGE_NOW_ADDR, buffer, index);
 	osDelay(1);
 	/*上报充电器状态*/
-	DWIN_WRITE(MACHINE_STATE_ADDR, g_PresentBatteryInfo.ChargerStatus,
-			   sizeof(g_PresentBatteryInfo.ChargerStatus));
+	DWIN_WRITE(MACHINE_STATE_ADDR, pb->ChargerStatus,
+			   sizeof(pb->ChargerStatus));
 	osDelay(1);
 	/*上报充电状态*/
-	DWIN_WRITE(CHARGE_STATE_ADDR, g_PresentBatteryInfo.ChargingStatus,
-			   sizeof(g_PresentBatteryInfo.ChargingStatus));
+	DWIN_WRITE(CHARGE_STATE_ADDR, pb->ChargingStatus,
+			   sizeof(pb->ChargingStatus));
 	osDelay(1);
-	Charging_Animation();
+	Charging_Animation(pb);
 }
 
 /*
  * 充电动画
  */
-void Charging_Animation(void)
+// void Charging_Animation(void)
+void Charging_Animation(BatteryInfo *pb)
 {
 	uint16_t temp_data = 0x0000;
 
 	/*在恒流模式*/
-	if (g_PresentBatteryInfo.Cstate == constant_current)
+	if (pb->Cstate == constant_current)
 	{
-		if (g_PresentBatteryInfo.QuickChargingFlag == true)
+		// if (pb->QuickChargingFlag == true)
+		if (__GET_FLAG(pb->Flag, QuickChargingFlag))
 		{
 			/*打开快速充电图标*/
 			temp_data = 0x0100;
@@ -495,7 +511,8 @@ void Charging_Animation(void)
 	/*清空缓冲区*/
 	temp_data = 0x0000;
 	/*充电计时器打开，也就是充电开始*/
-	if (g_PresentBatteryInfo.ChargingTimingFlag == true)
+	// if (pb->ChargingTimingFlag == true)
+	if (__GET_FLAG(pb->Flag, ChargingTimingFlag))
 	{
 		temp_data = 0x0100;
 	}
@@ -547,23 +564,24 @@ void Report_RealTime(void)
 /*
  * 充电器实时数据上报处理
  */
-uint8_t Report_DataHandle(uint8_t *buffer)
+// uint8_t Report_DataHandle(uint8_t *buffer)
+uint8_t Report_DataHandle(BatteryInfo *pb, uint8_t *buffer)
 {
 	uint8_t index = 0;
 	uint16_t temp_times = 0;
 
-	g_PresentBatteryInfo.ChargingQuantity = __Get_ChargingQuantity(g_ChargingQuantity); //获取充电电量
-	g_PresentBatteryInfo.ChargingTimes = __Get_ChargingTimes(t_ChargingTimes);			//获取充电时长
+	pb->ChargingQuantity = __Get_ChargingQuantity(g_ChargingQuantity); //获取充电电量
+	pb->ChargingTimes = __Get_ChargingTimes(t_ChargingTimes);		   //获取充电时长
 	float data[] = {
-		g_PresentBatteryInfo.PresentVoltage,		 //获取电瓶实际电压值
-		g_PresentBatteryInfo.PresentChargingVoltage, //获取当前充电电压值
-		g_PresentBatteryInfo.PresentCurrent,		 //获取当前充电电流值
-		g_PresentBatteryInfo.ChargingQuantity,		 //获取当前充电电量值
-		g_PresentBatteryInfo.PresentWireLossVoltage, //获取当前输电线电压损耗
+		pb->PresentVoltage,			//获取电瓶实际电压值
+		pb->PresentChargingVoltage, //获取当前充电电压值
+		pb->PresentCurrent,			//获取当前充电电流值
+		pb->ChargingQuantity,		//获取当前充电电量值
+		pb->PresentWireLossVoltage, //获取当前输电线电压损耗
 	};
 	/*把数据记录到本地寄存器*/
 	mdRTU_WriteHoldRegs(Slave1_Object, MDREGISTER_STARA_ADDR, sizeof(data) / sizeof(mdU16), (mdU16 *)data);
-	mdRTU_WriteHoldReg(Slave1_Object, MDREGISTER_CHARGINGTIMES_ADDR, g_PresentBatteryInfo.ChargingTimes);
+	mdRTU_WriteHoldReg(Slave1_Object, MDREGISTER_CHARGINGTIMES_ADDR, pb->ChargingTimes);
 	if (Slave1_Object->updateFlag && Slave1_Object)
 	{
 		Slave1_Object->updateFlag = false;
@@ -594,8 +612,8 @@ uint8_t Report_DataHandle(uint8_t *buffer)
 	memcpy(buffer, data, sizeof(data));
 	index = sizeof(data);
 	/*当前充电时长*/
-	buffer[index++] = g_PresentBatteryInfo.ChargingTimes >> 8;
-	buffer[index++] = g_PresentBatteryInfo.ChargingTimes;
+	buffer[index++] = pb->ChargingTimes >> 8;
+	buffer[index++] = pb->ChargingTimes;
 
 	return index;
 }
@@ -641,30 +659,31 @@ void Flash_Operation(void)
 /*
  *  采样电流、电压值
  */
-void Sampling_handle(void)
+// void Sampling_handle(void)
+void Sampling_handle(BatteryInfo *pb)
 {
 #if defined(KALMAN)
-	g_PresentBatteryInfo.PresentVoltage = kalmanFilter(&voltage_KfpFilter, Get_Voltage());
+	pb->PresentVoltage = kalmanFilter(&voltage_KfpFilter, Get_Voltage());
 	/*只有在充电状态下，才利用滤波检测电瓶真实电流*/
-	if (g_PresentBatteryInfo.Mstate == charging)
+	if (pb->Mstate == charging)
 	{
-		g_PresentBatteryInfo.PresentCurrent = kalmanFilter(&current_KfpFilter, Get_Current());
+		pb->PresentCurrent = kalmanFilter(&current_KfpFilter, Get_Current());
 		/*动态的校准由于外部线路或器件引起的压降*/
-		g_PresentBatteryInfo.PresentWireLossVoltage = g_PresentBatteryInfo.PresentChargingVoltage - g_PresentBatteryInfo.PresentVoltage;
-		// g_PresentBatteryInfo.PresentVoltage -= g_PresentBatteryInfo.PresentWireLossVoltage;
+		pb->PresentWireLossVoltage = pb->PresentChargingVoltage - pb->PresentVoltage;
+		// pb->PresentVoltage -= pb->PresentWireLossVoltage;
 	}
 	else
 	{ /*清除采样电流*/
-		g_PresentBatteryInfo.PresentCurrent = 0;
+		pb->PresentCurrent = 0;
 	}
 #else
-	g_PresentBatteryInfo.PresentVoltage = sidefilter(&SideparmVoltage, Get_Voltage());
+	pb->PresentVoltage = sidefilter(&SideparmVoltage, Get_Voltage());
 	/*只有在充电状态下，才利用滤波检测电瓶真实电流*/
-	if (g_PresentBatteryInfo.Mstate == charging)
+	if (pb->Mstate == charging)
 	{
 		/*动态的校准由于外部线路或器件引起的压降*/
-		g_PresentBatteryInfo.PresentWireLossVoltage = g_PresentBatteryInfo.PresentChargingVoltage - g_PresentBatteryInfo.PresentVoltage;
-		g_PresentBatteryInfo.PresentCurrent = sidefilter(&SideparmCurrent, Get_Current());
+		pb->PresentWireLossVoltage = pb->PresentChargingVoltage - pb->PresentVoltage;
+		pb->PresentCurrent = sidefilter(&SideparmCurrent, Get_Current());
 	}
 #endif
 }
@@ -672,7 +691,8 @@ void Sampling_handle(void)
 /*
  *  充电断路检测
  */
-void Check_ChargingDisconnection()
+// void Check_ChargingDisconnection()
+void Check_ChargingDisconnection(BatteryInfo *pb)
 {
 	/*开路次数*/
 	static uint8_t currentopen_counts = 0;
@@ -680,13 +700,14 @@ void Check_ChargingDisconnection()
 	static uint8_t fault_counts = 0;
 
 	/*检测电流值低于充电截止电流*/
-	if (g_PresentBatteryInfo.PresentCurrent < CHARGING_ENDCURRENT)
+	if (pb->PresentCurrent < CHARGING_ENDCURRENT)
 	{
 		currentopen_counts++;
 		if (++currentopen_counts > BREAKCOUNTS)
 		{
 			/*识别为电池开路或者电压低导致的无电流*/
-			g_PresentBatteryInfo.ZeroCurrentFlag = true;
+			// pb->ZeroCurrentFlag = true;
+			__SET_FLAG(pb->Flag, ZeroCurrentFlag);
 			currentopen_counts = 0;
 		}
 	}
@@ -695,13 +716,14 @@ void Check_ChargingDisconnection()
 		currentopen_counts = 0;
 	}
 	/*检测底板是否报错*/
-	if (g_PresentBatteryInfo.PresentChargingVoltage)
+	if (pb->PresentChargingVoltage)
 	{
 		if (HAL_GPIO_ReadPin(POWER_OK_GPIO_Port, POWER_OK_Pin) == GPIO_PIN_SET)
 		{
 			if (++fault_counts > BREAKCOUNTS)
 			{
-				g_PresentBatteryInfo.ChargingFaultFlag = true;
+				// pb->ChargingFaultFlag = true;
+				__SET_FLAG(pb->Flag, ChargingFaultFlag);
 			}
 		}
 		else
@@ -710,20 +732,21 @@ void Check_ChargingDisconnection()
 		}
 	}
 	/*充电故障：充电电压<当前电瓶两端电压或者充电过程中硬件异常导致的充电电压过高,报故障*/
-	if ((g_PresentBatteryInfo.PresentChargingVoltage < (g_PresentBatteryInfo.PresentVoltage - MIN_OFFSET_VOLTAGE)) ||
-		(g_PresentBatteryInfo.PresentChargingVoltage > (g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage +
-														MAX_OFFSET_VOLTAGE)) ||
-		(g_PresentBatteryInfo.PresentVoltage >
-		 (g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage + MAX_OFFSET_VOLTAGE)))
+	if ((pb->PresentChargingVoltage < (pb->PresentVoltage - MIN_OFFSET_VOLTAGE)) ||
+		(pb->PresentChargingVoltage > (pb->User_ConstantCurrentTargetVoltage +
+									   MAX_OFFSET_VOLTAGE)) ||
+		(pb->PresentVoltage >
+		 (pb->User_ConstantCurrentTargetVoltage + MAX_OFFSET_VOLTAGE)))
 	{
 		/*复位充电电压*/
-		Reset_ChargingVoltage();
+		Reset_ChargingVoltage(pb);
 		if (++error_counts >= MAX_DEFAULT_COUNTS)
 		{
 			error_counts = 0U;
 			/*故障提醒*/
-			g_PresentBatteryInfo.ChargingFaultFlag = true;
-			// g_PresentBatteryInfo.Cstate = error;
+			// pb->ChargingFaultFlag = true;
+			__SET_FLAG(pb->Flag, ChargingFaultFlag);
+			// pb->Cstate = error;
 		}
 	}
 	else
@@ -737,7 +760,8 @@ void Check_ChargingDisconnection()
  *  注：1.恒压和恒流区分不明显
  *
  */
-void getMachineState(void)
+// void getMachineState(void)
+void getMachineState(BatteryInfo *pb)
 {
 	float Current_Voltage = 0;
 	mdBit AcInput_Bit = false;
@@ -745,15 +769,22 @@ void getMachineState(void)
 
 	/*读出交流输入线圈状态值*/
 	mdRTU_ReadCoil(Slave1_Object, MDREGISTER_CLOSE_ACINPUT_ADDR, AcInput_Bit);
-	g_PresentBatteryInfo.CloseAcInputFlag = AcInput_Bit ? true : false;
+	// pb->CloseAcInputFlag = AcInput_Bit ? true : false;
+	AcInput_Bit ? __SET_FLAG(pb->Flag, CloseAcInputFlag) : __RESET_FLAG(pb->Flag, CloseAcInputFlag);
 	/*完全断路或者充电结束、充电故障、远程主动关闭*/
-	if ((g_PresentBatteryInfo.PresentVoltage < CHECK_VOLTAGE) || (g_PresentBatteryInfo.ChargingEndFlag == true) ||
-		(g_PresentBatteryInfo.ZeroCurrentFlag == true) || (g_PresentBatteryInfo.ChargingFaultFlag == true) ||
-		(g_PresentBatteryInfo.CloseAcInputFlag == true))
+	// if ((pb->PresentVoltage < CHECK_VOLTAGE) || (pb->ChargingEndFlag == true) ||
+	// 	(pb->ZeroCurrentFlag == true) || (pb->ChargingFaultFlag == true) ||
+	// 	(pb->CloseAcInputFlag == true))
+	if ((pb->PresentVoltage < CHECK_VOLTAGE) ||
+		__GET_FLAG(pb->Flag, ChargingEndFlag) ||
+		__GET_FLAG(pb->Flag, ZeroCurrentFlag) ||
+		__GET_FLAG(pb->Flag, ChargingFaultFlag) ||
+		__GET_FLAG(pb->Flag, CloseAcInputFlag))
 	{
 		mutex_flag = false;
-		g_PresentBatteryInfo.ChargingTimingFlag = false;
-		g_PresentBatteryInfo.Mstate = standby;
+		// pb->ChargingTimingFlag = false;
+		__RESET_FLAG(pb->Flag, ChargingTimingFlag);
+		pb->Mstate = standby;
 	}
 	else
 	{
@@ -763,17 +794,18 @@ void getMachineState(void)
 			// g_FirstFlag = false;
 			mutex_flag = true;
 			/*把当前检测到电瓶电压+0.5V作为起充电压*/
-			Current_Voltage = Reset_ChargingVoltage();
+			Current_Voltage = Reset_ChargingVoltage(pb);
 			/*自动设置当前电池的充电信息*/
-			Set_BaterrryInfo(Get_BaterrryInfo(Current_Voltage));
+			Set_BaterrryInfo(pb, Get_BaterrryInfo(Current_Voltage));
 			/*更新充电器后台充电参数*/
 			Report_BackChargingData();
 			/*触发开始打开底板供电即计时*/
 			g_Timer.Timer8Count = T_5S;
 		}
 		/*充电计时器开启*/
-		g_PresentBatteryInfo.ChargingTimingFlag = true;
-		g_PresentBatteryInfo.Mstate = charging;
+		// pb->ChargingTimingFlag = true;
+		__SET_FLAG(pb->Flag, ChargingTimingFlag);
+		pb->Mstate = charging;
 	}
 }
 
@@ -784,86 +816,89 @@ void getMachineState(void)
  * 获取当前充电状态
  * 通过ADC采集电压和DAC输出电压作为联合判断条件，决定当前处于那个阶段，解决图标跳动问题。
  */
-void getChargingState(void)
+// void getChargingState(void)
+void getChargingState(BatteryInfo *pb)
 {
 	static uint32_t StartTimes = 0;
 	static float LastCurrent = 0;
 
 	/*涓流模式*/
-	if ((g_PresentBatteryInfo.PresentVoltage < g_PresentBatteryInfo.User_TrickleTargetVlotage) ||
-		(g_PresentBatteryInfo.PresentChargingVoltage < g_PresentBatteryInfo.User_TrickleTargetVlotage))
+	if ((pb->PresentVoltage < pb->User_TrickleTargetVlotage) ||
+		(pb->PresentChargingVoltage < pb->User_TrickleTargetVlotage))
 	{
-		g_PresentBatteryInfo.Cstate = trickle;
+		pb->Cstate = trickle;
 	}
-	/*恒流模式g_PresentBatteryInfo.PresentChargingVoltage*/
-	else if ((g_PresentBatteryInfo.PresentVoltage < g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage) ||
-			 (g_PresentBatteryInfo.PresentChargingVoltage < g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage))
+	/*恒流模式pb->PresentChargingVoltage*/
+	else if ((pb->PresentVoltage < pb->User_ConstantCurrentTargetVoltage) ||
+			 (pb->PresentChargingVoltage < pb->User_ConstantCurrentTargetVoltage))
 	{ /*对输出电压进行限幅*/
 		/*可以在恒流阶段加入<恒流电流时，进入恒压充电*/
-		g_PresentBatteryInfo.Cstate = constant_current;
+		pb->Cstate = constant_current;
 		/*捕捉到最后一次从恒流转入恒压前电流值*/
-		// LastCurrent = g_PresentBatteryInfo.PresentCurrent;
+		// LastCurrent = pb->PresentCurrent;
 		/*如果是由于抖动造成的状态切换，清空计时*/
 		StartTimes = 0;
 	}
 	/*恒压模式*/
 	else
-	{ /*条件g_PresentBatteryInfo.PresentVoltage > g_PresentBatteryInfo.User_ConstantCurrentTargetVoltage满足*/
-		g_PresentBatteryInfo.Cstate = constant_voltage;
+	{ /*条件pb->PresentVoltage > pb->User_ConstantCurrentTargetVoltage满足*/
+		pb->Cstate = constant_voltage;
 		/*500MS一次，总共计数30min，若电流变化<0.05，则认为电池充满*/
 		if (++StartTimes > __CHARGING_END_TIMES())
 		{
 			StartTimes = 0;
-			if (fabs(LastCurrent - g_PresentBatteryInfo.PresentCurrent) <
+			if (fabs(LastCurrent - pb->PresentCurrent) <
 					GET_OFFSET_CURRENT(g_Charge.ConstantCurrent_Current) ||
-				(g_PresentBatteryInfo.PresentCurrent < g_PresentBatteryInfo.User_TrickleCurrent))
+				(pb->PresentCurrent < pb->User_TrickleCurrent))
 			{ /*正常充电结束的标志是：当前充电电流小于涓流电流，或者充电时长超过设定时间*/
 				/*清除前30分钟电流值*/
 				LastCurrent = 0;
-				g_PresentBatteryInfo.Cstate = chargingend;
+				pb->Cstate = chargingend;
 			}
 			/*更新当前电流值*/
-			LastCurrent = g_PresentBatteryInfo.PresentCurrent;
-			// g_PresentBatteryInfo.Cstate = chargingend;
+			LastCurrent = pb->PresentCurrent;
+			// pb->Cstate = chargingend;
 		}
 	}
 	/*把充电时间独立出来，避免充电后在检测*/
-	if (g_PresentBatteryInfo.ChargingTimes > g_Charge.TargetTime)
+	if (pb->ChargingTimes > g_Charge.TargetTime)
 	{
-		g_PresentBatteryInfo.Cstate = chargingend;
+		pb->Cstate = chargingend;
 	}
 }
 
 /*
  *  充电器处理事件处理
  */
-void Charger_Handle(void)
+// void Charger_Handle(void)
+void Charger_Handle(BatteryInfo *pb)
 {
 	/*获取一下充电器当前状态*/
-	getMachineState();
+	getMachineState(pb);
 	/*根据当前充电器状态，做出调整*/
-	switch (g_PresentBatteryInfo.Mstate)
+	switch (pb->Mstate)
 	{
 	case charging:
 	{
-		ChargerEvent();
-		g_PresentBatteryInfo.ChargerStatus[1] = 1 << 0;
+		ChargerEvent(pb);
+		pb->ChargerStatus[1] = 1 << 0;
 	}
 	break;
 	case standby:
 	{
-		StandbyEvent();
+		StandbyEvent(pb);
 		/*充电器状态待机*/
-		g_PresentBatteryInfo.ChargerStatus[1] = 1 << 1;
+		pb->ChargerStatus[1] = 1 << 1;
 	}
 	break;
 	default:
 		break;
 	}
-	if (g_PresentBatteryInfo.ChargingFaultFlag == true)
+	// if (pb->ChargingFaultFlag == true)
+	if (__GET_FLAG(pb->Flag, ChargingFaultFlag))
 	{
 		/*充电状态故障*/
-		g_PresentBatteryInfo.ChargingStatus[1] = 1 << 0;
+		pb->ChargingStatus[1] = 1 << 0;
 	}
 }
 
@@ -878,9 +913,10 @@ void Charger_Handle(void)
 /*
  * 获取电压调整补偿
  */
-void Get_VoltageMicroCompensate(const float UserCurrent)
+// void Get_VoltageMicroCompensate(const float UserCurrent)
+void Get_VoltageMicroCompensate(BatteryInfo *pb, const float UserCurrent)
 {
-	volatile float Difference = UserCurrent - g_PresentBatteryInfo.PresentCurrent;
+	volatile float Difference = UserCurrent - pb->PresentCurrent;
 	volatile float Absolute = fabs(Difference);
 	float CurrentGap = 0;
 	float Coefficient = UserCurrent / CURRENT_RATIO;
@@ -900,15 +936,15 @@ void Get_VoltageMicroCompensate(const float UserCurrent)
 	{
 		CurrentGap = 0;
 	}
-	g_PresentBatteryInfo.PresentChargingVoltage += CurrentGap;
+	pb->PresentChargingVoltage += CurrentGap;
 
 #if (USE_VAGUE_PID)
 	/*Obtain the PID controller vector according to the parameters*/
 	struct PID **pid_vector = fuzzy_pid_vector_init(fuzzy_pid_params, 2.0f, 4, 1, 0, mf_params, rule_base, DOF);
 	bool direct[DOF] = {true, false, false, false, true, true};
-	int out = fuzzy_pid_motor_pwd_output(g_PresentBatteryInfo.PresentVoltage, g_PresentBatteryInfo.PresentChargingVoltage, direct[5], pid_vector[5]);
-	g_PresentBatteryInfo.PresentVoltage += (float)(out - middle_pwm_output) / (float)middle_pwm_output * (float)max_error * 0.1f;
-	g_PresentBatteryInfo.PresentChargingVoltage = g_PresentBatteryInfo.PresentVoltage;
+	int out = fuzzy_pid_motor_pwd_output(pb->PresentVoltage, pb->PresentChargingVoltage, direct[5], pid_vector[5]);
+	pb->PresentVoltage += (float)(out - middle_pwm_output) / (float)middle_pwm_output * (float)max_error * 0.1f;
+	pb->PresentChargingVoltage = pb->PresentVoltage;
 	delete_pid_vector(pid_vector, DOF);
 #endif
 }
@@ -916,7 +952,8 @@ void Get_VoltageMicroCompensate(const float UserCurrent)
 /*
  *充电模式调整
  */
-void ChargingProcess()
+// void ChargingProcess(void)
+void ChargingProcess(BatteryInfo *pb)
 {
 	/*临时变量存储快充电流*/
 	float PresentChargingCurrent = 0;
@@ -929,14 +966,14 @@ void ChargingProcess()
 	/*读出快充线圈状态值*/
 	mdBit QuickCharging_Bit = false;
 
-	switch (g_PresentBatteryInfo.Cstate)
+	switch (pb->Cstate)
 	{
 	/*涓流充电模式*/
 	case trickle:
 	{
 		/*获取当前电流与期望电流之间的补偿值，调整当前电压*/
-		Get_VoltageMicroCompensate(g_PresentBatteryInfo.User_TrickleCurrent);
-		g_PresentBatteryInfo.ChargingStatus[1] = 1 << 1;
+		Get_VoltageMicroCompensate(pb, pb->User_TrickleCurrent);
+		pb->ChargingStatus[1] = 1 << 1;
 	}
 	break;
 	/*恒流充电模式*/
@@ -945,39 +982,42 @@ void ChargingProcess()
 		mdRTU_ReadCoil(Slave1_Object, MDREGISTER_FASTCHARGING_ADDR, QuickCharging_Bit);
 		if (QuickCharging_Bit == true) /*一键快充*/
 		{
-			g_PresentBatteryInfo.QuickChargingFlag = true;
+			// pb->QuickChargingFlag = true;
+			__SET_FLAG(pb->Flag, QuickChargingFlag);
 			/*增加一个变量保证原本的电流值不发生恶意篡改*/
-			PresentChargingCurrent = g_PresentBatteryInfo.User_ConstantCurrent_Current;
+			PresentChargingCurrent = pb->User_ConstantCurrent_Current;
 			PresentChargingCurrent *= FAST_CHARGE_CURRENT_COEFFICENT;
-			Get_VoltageMicroCompensate(PresentChargingCurrent);
+			Get_VoltageMicroCompensate(pb, PresentChargingCurrent);
 		}
 		else
 		{
-			g_PresentBatteryInfo.QuickChargingFlag = false;
-			Get_VoltageMicroCompensate(g_PresentBatteryInfo.User_ConstantCurrent_Current);
+			// pb->QuickChargingFlag = false;
+			__RESET_FLAG(pb->Flag, QuickChargingFlag);
+			Get_VoltageMicroCompensate(pb, pb->User_ConstantCurrent_Current);
 		}
-		g_PresentBatteryInfo.ChargingStatus[1] = 1 << 2;
+		pb->ChargingStatus[1] = 1 << 2;
 	}
 	break;
 	/*恒压充电模式*/
 	case constant_voltage:
 	{
 		/*恒压模式电压即为恒流模式调整得到的充电电压*/
-		g_PresentBatteryInfo.ChargingStatus[1] = 1 << 3;
+		pb->ChargingStatus[1] = 1 << 3;
 	}
 	break;
 	/*充电结束*/
 	case chargingend:
 	{
-		g_PresentBatteryInfo.ChargingEndFlag = true;	 //充电结束标志
-		g_PresentBatteryInfo.PresentChargingVoltage = 0; //充电电压输出为0V
-		g_PresentBatteryInfo.ChargingStatus[1] = 1 << 4;
+		// pb->ChargingEndFlag = true; //充电结束标志
+		__SET_FLAG(pb->Flag, ChargingEndFlag);
+		pb->PresentChargingVoltage = 0; //充电电压输出为0V
+		pb->ChargingStatus[1] = 1 << 4;
 	}
 	break;
 		/*充电错误*/
 		// case error:
 		// {
-		// 	g_PresentBatteryInfo.ChargingStatus[1] = 1 << 0;
+		// 	pb->ChargingStatus[1] = 1 << 0;
 		// }
 		// break;
 
@@ -987,23 +1027,24 @@ void ChargingProcess()
 	/*加入PID调整算法，控制输出电压*/
 	/*存在不稳定性，断开几次后会出现负值*/
 #if (USE_ORDINARY_PID)
-	TempPidValue = PID_realize(g_PresentBatteryInfo.PresentChargingVoltage, g_PresentBatteryInfo.PresentVoltage);
+	TempPidValue = PID_realize(pb->PresentChargingVoltage, pb->PresentVoltage);
 	/*PID失控，排除错误情况*/
 	if ((TempPidValue < 0.5F) && (TempPidValue > -0.5F))
-	{ /*原因g_PresentBatteryInfo.PresentVoltage << g_PresentBatteryInfo.PresentChargingVoltage*/
-		g_PresentBatteryInfo.PresentChargingVoltage += TempPidValue;
+	{ /*原因pb->PresentVoltage << pb->PresentChargingVoltage*/
+		pb->PresentChargingVoltage += TempPidValue;
 	}
 #endif
 	/*输出当前电压值*/
-	Set_Voltage(g_PresentBatteryInfo.PresentChargingVoltage);
+	Set_Voltage(pb->PresentChargingVoltage);
 }
 
 /*
  * 充电状态事件处理
  */
-void ChargerEvent(void)
+// void ChargerEvent(void)
+void ChargerEvent(BatteryInfo *pb)
 {
-	// if (!g_PresentBatteryInfo.CloseAcInputFlag)
+	// if (!pb->CloseAcInputFlag)
 	{
 		/*打开底板电源供电开关*/
 		HAL_GPIO_WritePin(POWER_ON_GPIO_Port, POWER_ON_Pin, GPIO_PIN_SET);
@@ -1019,39 +1060,42 @@ void ChargerEvent(void)
 		/*风扇开关打开*/
 		HAL_GPIO_WritePin(FANS_POWER_GPIO_Port, FANS_POWER_Pin, GPIO_PIN_SET);
 		/*获取充电状态*/
-		getChargingState();
+		getChargingState(pb);
 	}
 	/*断路检测(不是充电结束)*/
-	// if (g_PresentBatteryInfo.Cstate != chargingend)
+	// if (pb->Cstate != chargingend)
 	// {
 	// 	Check_ChargingDisconnection();
 	// }
 	/*充电过程调整*/
-	ChargingProcess();
+	ChargingProcess(pb);
 	/*断路检测(不是充电结束)*/
-	// if (g_PresentBatteryInfo.Cstate != chargingend)
+	// if (pb->Cstate != chargingend)
 	// {
 	/*不能立即打开充电开关*/
-	Check_ChargingDisconnection();
+	Check_ChargingDisconnection(pb);
 	// }
 }
 
 /*
  * 其他事件处理
  */
-void OtherEvent(void)
+// void OtherEvent(void)
+void OtherEvent(BatteryInfo *pb)
 {
 	static uint32_t count1, count2;
 	/*如果充电结束之后，还没有拔下，只有等到电压值降到一定程度才可以继续充电*/
-	if (g_PresentBatteryInfo.ChargingEndFlag == true)
+	// if (pb->ChargingEndFlag == true)
+	if (__GET_FLAG(pb->Flag, ChargingEndFlag))
 	{ /*复位充电输出电压*/
-		g_PresentBatteryInfo.PresentChargingVoltage = 0U;
-		if (g_PresentBatteryInfo.ChargingTimes < g_Charge.TargetTime)
+		pb->PresentChargingVoltage = 0U;
+		if (pb->ChargingTimes < g_Charge.TargetTime)
 		{ /*电池电压低于User_SecondBootVoltage后并且小于充电时间才开始充电*/
-			if (g_PresentBatteryInfo.PresentVoltage < g_PresentBatteryInfo.User_SecondBootVoltage)
+			if (pb->PresentVoltage < pb->User_SecondBootVoltage)
 			{
 				/*清除充电结束标志*/
-				g_PresentBatteryInfo.ChargingEndFlag = false;
+				// pb->ChargingEndFlag = false;
+				__RESET_FLAG(pb->Flag, ChargingEndFlag);
 				/*重新获取充电电压*/
 				// Reset_ChargingVoltage();
 			}
@@ -1059,18 +1103,20 @@ void OtherEvent(void)
 	}
 	else /*充电结束正常显示充电结束*/
 	{	 /*待机下清除充电状态*/
-		g_PresentBatteryInfo.ChargingStatus[1] = 0 << 0;
+		pb->ChargingStatus[1] = 0 << 0;
 	}
 	/*达到断路次数后，进入待机模式*/
 	/*如果当前断路是由于零电流造成，则可能是电池内部电压不稳定，此时不能清空计时和电量*/
 	/*此时可能是电流为0，电压为0或者电流不为零，电压为0（正常不会出现），判别为电池已经被断开连接充电器物理线路*/
-	if (g_PresentBatteryInfo.ZeroCurrentFlag == true)
+	// if (pb->ZeroCurrentFlag == true)
+	if (__GET_FLAG(pb->Flag, ZeroCurrentFlag))
 	{
 		/*考虑电路中电容特性：8S后再检测*/
 		if (count1++ == __RECOVERYCOUNTS())
 		{
 			count1 = 0;
-			g_PresentBatteryInfo.ZeroCurrentFlag = false;
+			// pb->ZeroCurrentFlag = false;
+			__RESET_FLAG(pb->Flag, ZeroCurrentFlag);
 		}
 		count2++;
 	}
@@ -1078,40 +1124,44 @@ void OtherEvent(void)
 	if (count2 == MAX_DEFAULT_COUNTS)
 	{
 		count2 = 0;
-		g_PresentBatteryInfo.ChargingFaultFlag = true;
+		// pb->ChargingFaultFlag = true;
+		__SET_FLAG(pb->Flag, ChargingFaultFlag);
 	}
 	/*充电故障导致的待机，设置输出电压为0v*/
-	// if (g_PresentBatteryInfo.ChargingFaultFlag == true)
+	// if (pb->ChargingFaultFlag == true)
 	// {
-	// 	g_PresentBatteryInfo.PresentChargingVoltage = 0U;
+	// 	pb->PresentChargingVoltage = 0U;
 	// }
 }
 
 /*
  * 待机状态事件处理
  */
-void StandbyEvent(void)
+// void StandbyEvent(void)
+void StandbyEvent(BatteryInfo *pb)
 {
 	/*充电结束后以及由断路造成的其他信号处理*/
-	OtherEvent();
+	OtherEvent(pb);
 	/*复位充电输出电压*/
-	g_PresentBatteryInfo.PresentChargingVoltage = 0U;
+	pb->PresentChargingVoltage = 0U;
 	/*零电压开路：电压低于2V,则认为是对电池插拔*/
-	if (g_PresentBatteryInfo.PresentVoltage < g_PresentBatteryInfo.User_TrickleTargetVlotage)
+	if (pb->PresentVoltage < pb->User_TrickleTargetVlotage)
 	{
 		/*首次接入电瓶后跟新当前电池充电参数，电瓶拔掉后视为当前电瓶本次充电周期结束*/
 		// g_FirstFlag = true;
 		/*复位充电故障标志*/
-		g_PresentBatteryInfo.ChargingFaultFlag = false;
+		// pb->ChargingFaultFlag = false;
+		__RESET_FLAG(pb->Flag, ChargingFaultFlag);
 		/*复位充电电流*/
-		g_PresentBatteryInfo.PresentCurrent = 0U;
+		pb->PresentCurrent = 0U;
 		/*复位充电输出电压*/
-		// g_PresentBatteryInfo.PresentChargingVoltage = 0U;
+		// pb->PresentChargingVoltage = 0U;
 		/*同时清除充电时间表和电量计*/
 		t_ChargingTimes = 0U;
 		g_ChargingQuantity = 0U;
 		/*清除充电结束标志*/
-		g_PresentBatteryInfo.ChargingEndFlag = false;
+		// pb->ChargingEndFlag = false;
+		__RESET_FLAG(pb->Flag, ChargingEndFlag);
 		/*风扇开关关闭*/
 		HAL_GPIO_WritePin(FANS_POWER_GPIO_Port, FANS_POWER_Pin, GPIO_PIN_RESET);
 		// /*关闭底板电源供电开关*/
@@ -1119,7 +1169,7 @@ void StandbyEvent(void)
 	}
 	/*待机但是没有拔掉设备，让PresentChargingVoltage不复位*/
 	/*电压输出为当前PresentChargingVoltage*/
-	Set_Voltage(g_PresentBatteryInfo.PresentChargingVoltage);
+	Set_Voltage(pb->PresentChargingVoltage);
 	/*充电结束进入待机模式时，关闭总电源开关和充电输出开关*/
 	/*断开充电回路*/
 	HAL_GPIO_WritePin(CHARGING_GO_GPIO_Port, CHARGING_GO_Pin, GPIO_PIN_RESET);
@@ -1128,7 +1178,7 @@ void StandbyEvent(void)
 	/*关闭底板电源*/
 	HAL_GPIO_WritePin(POWER_ON_GPIO_Port, POWER_ON_Pin, GPIO_PIN_RESET);
 	/*待机下清除充电状态*/
-	// g_PresentBatteryInfo.ChargingStatus[1] = 0 << 0;
+	// pb->ChargingStatus[1] = 0 << 0;
 	/*清除定时标志*/
 	g_Timer.Timer8Flag = false;
 }
@@ -1136,14 +1186,17 @@ void StandbyEvent(void)
 /*
  * 充电时间电量计时器
  */
-void ChargeTimer(void)
+// void ChargeTimer(void)
+void ChargeTimer(BatteryInfo *pb)
 {
 	/*充电计时开始并且充电没有结束*/
-	if ((g_PresentBatteryInfo.ChargingTimingFlag == true) && (g_PresentBatteryInfo.ChargingEndFlag == false))
+	// if ((pb->ChargingTimingFlag == true) && (pb->ChargingEndFlag == false))
+	if (__GET_FLAG(pb->Flag, ChargingTimingFlag) &&
+		!__GET_FLAG(pb->Flag, ChargingEndFlag))
 	{ /*统计充电时长1s/次*/
 		t_ChargingTimes += 1U;
 		/*统计充电电量*/
-		g_ChargingQuantity += g_PresentBatteryInfo.PresentCurrent;
+		g_ChargingQuantity += pb->PresentCurrent;
 	}
 }
 
@@ -1417,7 +1470,8 @@ void SetBatteryCapacity(uint8_t *dat, uint8_t length)
 	{
 		g_Charge.IsSavedFlag = true;
 		/*一旦更新过电池容量，立马更新充电电流信息*/
-		Set_BaterrryCurrentInfo();
+		// Set_BaterrryCurrentInfo();
+		Set_BaterrryCurrentInfo(&g_PresentBatteryInfo);
 		/*更新屏幕信息*/
 		Report_BackChargingData();
 	}
@@ -1436,7 +1490,8 @@ void Set_UnitElements(uint8_t *dat, uint8_t length)
 	g_Charge.IsSavedFlag = true;
 	g_Charge.UnitElements = ((uint16_t)dat[0]) << 8 | dat[1];
 	/*校准当前电池的单元个数信息*/
-	Set_BaterrryVoltageInfo(0U);
+	// Set_BaterrryVoltageInfo(0U);
+	Set_BaterrryVoltageInfo(&g_PresentBatteryInfo, 0U);
 	/*更新充电器后台充电参数*/
 	Report_BackChargingData();
 }

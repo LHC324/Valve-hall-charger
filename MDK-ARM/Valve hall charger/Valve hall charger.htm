@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Valve hall charger\Valve hall charger.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Valve hall charger\Valve hall charger.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Jul 03 15:36:48 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Jul 09 14:12:23 2022
 <BR><P>
 <H3>Maximum Stack Usage =        488 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -20,11 +20,9 @@ Functions with no stack information
 Mutually Recursive functions
 </H3> <LI><a href="#[37]">ADC1_2_IRQHandler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[37]">ADC1_2_IRQHandler</a><BR>
  <LI><a href="#[1f]">BusFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1f]">BusFault_Handler</a><BR>
- <LI><a href="#[a0]">Charger_Task</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[a0]">Charger_Task</a><BR>
  <LI><a href="#[1d]">HardFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1d]">HardFault_Handler</a><BR>
  <LI><a href="#[1e]">MemManage_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1e]">MemManage_Handler</a><BR>
  <LI><a href="#[1c]">NMI_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1c]">NMI_Handler</a><BR>
- <LI><a href="#[9f]">Sampling_Task</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[9f]">Sampling_Task</a><BR>
  <LI><a href="#[20]">UsageFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[20]">UsageFault_Handler</a><BR>
 </UL>
 <P>
@@ -1243,7 +1241,7 @@ Global Symbols
 <P><STRONG><a name="[e]"></a>ChargeTargetTime</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, charginghandle.o(i.ChargeTargetTime))
 <BR>[Address Reference Count : 1]<UL><LI> dwin.o(.data)
 </UL>
-<P><STRONG><a name="[11b]"></a>ChargeTimer</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, charginghandle.o(i.ChargeTimer))
+<P><STRONG><a name="[11b]"></a>ChargeTimer</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, charginghandle.o(i.ChargeTimer))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = ChargeTimer &rArr; __aeabi_fadd
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
@@ -1251,40 +1249,36 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ChargerTime_Callback
 </UL>
 
-<P><STRONG><a name="[9e]"></a>ChargerTime_Callback</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, freertos.o(i.ChargerTime_Callback))
+<P><STRONG><a name="[9e]"></a>ChargerTime_Callback</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, freertos.o(i.ChargerTime_Callback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = ChargerTime_Callback &rArr; ChargeTimer &rArr; __aeabi_fadd
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ChargeTimer
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[11d]"></a>Charger_Handle</STRONG> (Thumb, 116 bytes, Stack size 24 bytes, charginghandle.o(i.Charger_Handle))
+<P><STRONG><a name="[11d]"></a>Charger_Handle</STRONG> (Thumb, 124 bytes, Stack size 24 bytes, charginghandle.o(i.Charger_Handle))
 <BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = Charger_Handle &rArr; getMachineState &rArr; Report_BackChargingData &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
+<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getMachineState
 <LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_ChargingDisconnection
 <LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ChargingProcess
-<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getMachineState
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StandbyEvent
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Charger_Task
 </UL>
 
-<P><STRONG><a name="[a0]"></a>Charger_Task</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, freertos.o(i.Charger_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 192 + In Cycle
-<LI>Call Chain = Charger_Task &rArr;  Charger_Task (Cycle)
+<P><STRONG><a name="[a0]"></a>Charger_Task</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, freertos.o(i.Charger_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = Charger_Task &rArr; Charger_Handle &rArr; getMachineState &rArr; Report_BackChargingData &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Charger_Handle
-<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Charger_Task
-</UL>
-<BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Charger_Task
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[121]"></a>ChargingProcess</STRONG> (Thumb, 114 bytes, Stack size 24 bytes, charginghandle.o(i.ChargingProcess))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = ChargingProcess &rArr; Set_Voltage &rArr; Get_DACVoltageInterval &rArr; __aeabi_cfcmple
+<P><STRONG><a name="[121]"></a>ChargingProcess</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, charginghandle.o(i.ChargingProcess))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = ChargingProcess &rArr; Set_Voltage &rArr; Get_DACVoltageInterval &rArr; __aeabi_cfcmple
 </UL>
 <BR>[Calls]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_VoltageMicroCompensate
 <LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_Voltage
@@ -1299,8 +1293,8 @@ Global Symbols
 <P><STRONG><a name="[10]"></a>CheckUserName</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, charginghandle.o(i.CheckUserName))
 <BR>[Address Reference Count : 1]<UL><LI> dwin.o(.data)
 </UL>
-<P><STRONG><a name="[122]"></a>Check_ChargingDisconnection</STRONG> (Thumb, 164 bytes, Stack size 24 bytes, charginghandle.o(i.Check_ChargingDisconnection))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = Check_ChargingDisconnection &rArr; Reset_ChargingVoltage &rArr; Get_Voltage &rArr; __aeabi_fmul
+<P><STRONG><a name="[122]"></a>Check_ChargingDisconnection</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, charginghandle.o(i.Check_ChargingDisconnection))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Check_ChargingDisconnection &rArr; Reset_ChargingVoltage &rArr; Get_Voltage &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_ChargingVoltage
@@ -1467,7 +1461,7 @@ Global Symbols
 <P><STRONG><a name="[22]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f1xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f103xe.o(RESET)
 </UL>
-<P><STRONG><a name="[140]"></a>Dwin_ReportHadle</STRONG> (Thumb, 170 bytes, Stack size 56 bytes, charginghandle.o(i.Dwin_ReportHadle))
+<P><STRONG><a name="[140]"></a>Dwin_ReportHadle</STRONG> (Thumb, 172 bytes, Stack size 56 bytes, charginghandle.o(i.Dwin_ReportHadle))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = Dwin_ReportHadle &rArr; Report_DataHandle &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1627,7 +1621,7 @@ Global Symbols
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_ChargingVoltage
 </UL>
 
-<P><STRONG><a name="[125]"></a>Get_VoltageMicroCompensate</STRONG> (Thumb, 92 bytes, Stack size 32 bytes, charginghandle.o(i.Get_VoltageMicroCompensate))
+<P><STRONG><a name="[125]"></a>Get_VoltageMicroCompensate</STRONG> (Thumb, 94 bytes, Stack size 32 bytes, charginghandle.o(i.Get_VoltageMicroCompensate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Get_VoltageMicroCompensate &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfrcmple
@@ -2378,7 +2372,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f103xe.o(RESET)
 </UL>
-<P><STRONG><a name="[1bc]"></a>OtherEvent</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, charginghandle.o(i.OtherEvent))
+<P><STRONG><a name="[1bc]"></a>OtherEvent</STRONG> (Thumb, 104 bytes, Stack size 16 bytes, charginghandle.o(i.OtherEvent))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = OtherEvent &rArr; __aeabi_cfcmple
 </UL>
 <BR>[Calls]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
@@ -2393,13 +2387,13 @@ Global Symbols
 <LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DWIN_WRITE
 <LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_UnitElements
+<BR>[Called By]<UL><LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getMachineState
+<LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_UnitElements
 <LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetBatteryCapacity
-<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getMachineState
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Iwdg_Task
 </UL>
 
-<P><STRONG><a name="[a1]"></a>Report_Task</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, freertos.o(i.Report_Task))
+<P><STRONG><a name="[a1]"></a>Report_Task</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, freertos.o(i.Report_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = Report_Task &rArr; Dwin_ReportHadle &rArr; Report_DataHandle &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2410,15 +2404,11 @@ Global Symbols
 <P><STRONG><a name="[f]"></a>RestoreFactory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, charginghandle.o(i.RestoreFactory))
 <BR>[Address Reference Count : 1]<UL><LI> dwin.o(.data)
 </UL>
-<P><STRONG><a name="[9f]"></a>Sampling_Task</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, freertos.o(i.Sampling_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 72 + In Cycle
-<LI>Call Chain = Sampling_Task &rArr;  Sampling_Task (Cycle)
+<P><STRONG><a name="[9f]"></a>Sampling_Task</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, freertos.o(i.Sampling_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Sampling_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[1be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sampling_handle
-<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sampling_Task
-</UL>
-<BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sampling_Task
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -2436,7 +2426,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sampling_Task
 </UL>
 
-<P><STRONG><a name="[a]"></a>SetBatteryCapacity</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, charginghandle.o(i.SetBatteryCapacity))
+<P><STRONG><a name="[a]"></a>SetBatteryCapacity</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, charginghandle.o(i.SetBatteryCapacity))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = SetBatteryCapacity &rArr; Report_BackChargingData &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Report_BackChargingData
@@ -2449,8 +2439,8 @@ Global Symbols
 <LI><a href="#[1b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_RTC_Init
 </UL>
 
-<P><STRONG><a name="[1c2]"></a>Set_BaterrryInfo</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, charginghandle.o(i.Set_BaterrryInfo))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = Set_BaterrryInfo &rArr; Set_BaterrryVoltageInfo &rArr; __aeabi_fmul
+<P><STRONG><a name="[1c2]"></a>Set_BaterrryInfo</STRONG> (Thumb, 22 bytes, Stack size 16 bytes, charginghandle.o(i.Set_BaterrryInfo))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = Set_BaterrryInfo &rArr; Set_BaterrryVoltageInfo &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryVoltageInfo
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryCurrentInfo
@@ -2481,7 +2471,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dwin.o(.data)
 </UL>
-<P><STRONG><a name="[c]"></a>Set_UnitElements</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, charginghandle.o(i.Set_UnitElements))
+<P><STRONG><a name="[c]"></a>Set_UnitElements</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, charginghandle.o(i.Set_UnitElements))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Set_UnitElements &rArr; Report_BackChargingData &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Report_BackChargingData
@@ -2632,13 +2622,13 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__printf
 </UL>
 
-<P><STRONG><a name="[120]"></a>getChargingState</STRONG> (Thumb, 172 bytes, Stack size 32 bytes, charginghandle.o(i.getChargingState))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = getChargingState &rArr; __aeabi_fmul
+<P><STRONG><a name="[11e]"></a>getMachineState</STRONG> (Thumb, 134 bytes, Stack size 16 bytes, charginghandle.o(i.getMachineState))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = getMachineState &rArr; Report_BackChargingData &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
-<BR>[Calls]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
-<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
-<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
-<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
+<BR>[Calls]<UL><LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryInfo
+<LI><a href="#[1a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Report_BackChargingData
+<LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_BaterrryInfo
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_ChargingVoltage
 </UL>
 <BR>[Called By]<UL><LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Charger_Handle
 </UL>
@@ -3954,7 +3944,6 @@ Global Symbols
 
 <P><STRONG><a name="[12d]"></a>__aeabi_ui2f</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, fflt_clz.o(x$fpl$ffltu))
 <BR><BR>[Called By]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Dac_Clibration
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TrickleChargeTargetVoltage
 <LI><a href="#[4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TrickleChargeCurrent
 <LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_SecondBootvoltage
@@ -3964,6 +3953,7 @@ Global Symbols
 <LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ConstantVoltageTargetCurrent
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ConstantCurrent_Current
 <LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ConstantCurrentTargetVoltage
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryVoltageInfo
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryCurrentInfo
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_ChargingVoltage
@@ -3976,11 +3966,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = __aeabi_cfcmple
 </UL>
 <BR>[Called By]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Dac_Clibration
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[1bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OtherEvent
 <LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_DACVoltageInterval
 <LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_BaterrryInfo
 <LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_ChargingDisconnection
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StandbyEvent
 </UL>
 
@@ -3998,11 +3988,11 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;kalmanFilter
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Dac_Clibration
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[1be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sampling_handle
 <LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_VoltageMicroCompensate
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_Voltage
 <LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ChargingProcess
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_Voltage
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryVoltageInfo
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryCurrentInfo
@@ -4048,10 +4038,10 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;kalmanFilter
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Dac_Clibration
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 <LI><a href="#[1be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sampling_handle
 <LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_VoltageMicroCompensate
 <LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_ChargingDisconnection
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getChargingState
 </UL>
 
 <P><STRONG><a name="[263]"></a>_fsub</STRONG> (Thumb, 234 bytes, Stack size 16 bytes, faddsub_clz.o(x$fpl$fsub), UNUSED)
@@ -4117,19 +4107,19 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Dwin_ReportHadle
 </UL>
 
-<P><STRONG><a name="[12c]"></a>Reset_ChargingVoltage</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, charginghandle.o(i.Reset_ChargingVoltage))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Reset_ChargingVoltage &rArr; Get_Voltage &rArr; __aeabi_fmul
+<P><STRONG><a name="[12c]"></a>Reset_ChargingVoltage</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, charginghandle.o(i.Reset_ChargingVoltage))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Reset_ChargingVoltage &rArr; Get_Voltage &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_Voltage
 <LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
 <LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_ChargingDisconnection
-<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getMachineState
+<BR>[Called By]<UL><LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getMachineState
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_ChargingDisconnection
 </UL>
 
-<P><STRONG><a name="[1c0]"></a>Set_BaterrryCurrentInfo</STRONG> (Thumb, 88 bytes, Stack size 24 bytes, charginghandle.o(i.Set_BaterrryCurrentInfo))
+<P><STRONG><a name="[1c0]"></a>Set_BaterrryCurrentInfo</STRONG> (Thumb, 90 bytes, Stack size 24 bytes, charginghandle.o(i.Set_BaterrryCurrentInfo))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Set_BaterrryCurrentInfo &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
@@ -4140,7 +4130,7 @@ Local Symbols
 <LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetBatteryCapacity
 </UL>
 
-<P><STRONG><a name="[1c3]"></a>Set_BaterrryVoltageInfo</STRONG> (Thumb, 180 bytes, Stack size 32 bytes, charginghandle.o(i.Set_BaterrryVoltageInfo))
+<P><STRONG><a name="[1c3]"></a>Set_BaterrryVoltageInfo</STRONG> (Thumb, 188 bytes, Stack size 32 bytes, charginghandle.o(i.Set_BaterrryVoltageInfo))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Set_BaterrryVoltageInfo &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
@@ -4178,13 +4168,13 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Charger_Handle
 </UL>
 
-<P><STRONG><a name="[11e]"></a>getMachineState</STRONG> (Thumb, 118 bytes, Stack size 16 bytes, charginghandle.o(i.getMachineState))
-<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = getMachineState &rArr; Report_BackChargingData &rArr; DWIN_WRITE &rArr; DWIN_Send &rArr; HAL_UART_Transmit &rArr; UART_WaitOnFlagUntilTimeout
+<P><STRONG><a name="[120]"></a>getChargingState</STRONG> (Thumb, 170 bytes, Stack size 32 bytes, charginghandle.o(i.getChargingState))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = getChargingState &rArr; __aeabi_fmul
 </UL>
-<BR>[Calls]<UL><LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_BaterrryInfo
-<LI><a href="#[1a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Report_BackChargingData
-<LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_BaterrryInfo
-<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Reset_ChargingVoltage
+<BR>[Calls]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
+<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cfcmple
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
+<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
 </UL>
 <BR>[Called By]<UL><LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Charger_Handle
 </UL>

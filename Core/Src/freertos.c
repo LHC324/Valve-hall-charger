@@ -177,15 +177,15 @@ void MX_FREERTOS_Init(void)
   /* Create the thread(s) */
   /* definition and creation of Sampling */
   osThreadDef(Sampling, Sampling_Task, osPriorityNormal, 0, 256);
-  SamplingHandle = osThreadCreate(osThread(Sampling), NULL);
+  SamplingHandle = osThreadCreate(osThread(Sampling), &g_PresentBatteryInfo);
 
   /* definition and creation of Charger */
   osThreadDef(Charger, Charger_Task, osPriorityAboveNormal, 0, 512);
-  ChargerHandle = osThreadCreate(osThread(Charger), NULL);
+  ChargerHandle = osThreadCreate(osThread(Charger), &g_PresentBatteryInfo);
 
   /* definition and creation of Report */
   osThreadDef(Report, Report_Task, osPriorityLow, 0, 256);
-  ReportHandle = osThreadCreate(osThread(Report), NULL);
+  ReportHandle = osThreadCreate(osThread(Report), &g_PresentBatteryInfo);
 
   /* definition and creation of Update */
   osThreadDef(Update, Update_Task, osPriorityHigh, 0, 256);
@@ -214,10 +214,12 @@ void MX_FREERTOS_Init(void)
 void Sampling_Task(void const *argument)
 {
   /* USER CODE BEGIN Sampling_Task */
+  BatteryInfo *pb = (BatteryInfo *)argument;
   /* Infinite loop */
   for (;;)
   {
-    Sampling_handle();
+    if (pb)
+      Sampling_handle(pb);
     osDelay(10);
   }
   /* USER CODE END Sampling_Task */
@@ -233,6 +235,7 @@ void Sampling_Task(void const *argument)
 void Charger_Task(void const *argument)
 {
   /* USER CODE BEGIN Charger_Task */
+  BatteryInfo *pb = (BatteryInfo *)argument;
   /* Infinite loop */
   for (;;)
   {
@@ -240,7 +243,8 @@ void Charger_Task(void const *argument)
     User_Debug();
     osDelay(4000);
 #else
-    Charger_Handle();
+    if (pb)
+      Charger_Handle(pb);
     osDelay(CHARGING_CYCLE);
 #endif
   }
@@ -257,10 +261,12 @@ void Charger_Task(void const *argument)
 void Report_Task(void const *argument)
 {
   /* USER CODE BEGIN Report_Task */
+  BatteryInfo *pb = (BatteryInfo *)argument;
   /* Infinite loop */
   for (;;)
   {
-    Dwin_ReportHadle();
+    if (pb)
+      Dwin_ReportHadle(pb);
     osDelay(1000);
   }
   /* USER CODE END Report_Task */
@@ -389,7 +395,7 @@ void User_Timer_Callback(void const *argument)
 void ChargerTime_Callback(void const *argument)
 {
   /* USER CODE BEGIN ChargerTime_Callback */
-  ChargeTimer();
+  ChargeTimer(&g_PresentBatteryInfo);
   SET_TIMER_FLAG(g_Timer);
   /* USER CODE END ChargerTime_Callback */
 }
